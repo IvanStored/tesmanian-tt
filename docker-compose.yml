@@ -10,6 +10,7 @@ services:
       - .env
     depends_on:
       - redis
+      - selenium
 
   redis:
     image: redis:alpine
@@ -19,3 +20,11 @@ services:
       - HOST=${REDIS_HOST},
     ports:
       - "${REDIS_PORT}:6379"
+
+  selenium:
+    image: selenium/standalone-firefox
+    env_file:
+      - .env
+    hostname: ${SELENIUM_HOST}
+    ports:
+      - "${SELENIUM_PORT}:4444"

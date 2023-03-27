@@ -42,6 +42,7 @@ tomli==2.0.1
 trio==0.22.0
 trio-websocket==0.10.2
 urllib3==1.26.15
+websockets==10.4
 wsproto==1.2.0
 xvfbwrapper==0.2.9
 yarl==1.8.2

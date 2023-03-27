@@ -8,14 +8,14 @@ from core.client import Client
 from core.config import settings as s
 
 
-async def send_message(last_post, message) -> None:
+async def send_and_pin_message(last_post: Any, message: types.Message) -> None:
     await s.BOT.send_message(chat_id=s.CHANNEL_ID, text=last_post.decode("utf-8"))
     await message.answer(
         text=f"This post was posted to channel: {last_post.decode('utf-8')}"
     )
 
 
-async def get_last_post_from_storage(link: str):
+async def get_last_post_from_storage(link: str) -> Any:
     return await s.STORAGE.get(name=link)
 
 
@@ -48,9 +48,9 @@ async def parser(
 ) -> None:
     try:
         response = client.get_news_page()
-        s.logger.info(f"Success request with code {response.status_code}")
+        s.logger.info(msg=f"Success request with code {response.status_code}")
     except Exception as e:
-        s.logger.error(e)
+        s.logger.error(msg=e)
 
     soup = BeautifulSoup(response.text, "html.parser")  # NOQA
     posts = soup.select(".blog-posts > blog-post-card")
@@ -62,7 +62,7 @@ async def parser(
             await save_post_to_storage(link=link, author=author, title=title, date=date)
             try:
                 last_post = await get_last_post_from_storage(link=link)
-                await send_message(last_post=last_post, message=message)
-                s.logger.info(f"Article was posted to channel")
+                await send_and_pin_message(last_post=last_post, message=message)
+                s.logger.info(msg=f"Article {link} was posted to channel")
             except Exception as e:
-                s.logger.error(e)
+                s.logger.error(msg=e)
