@@ -4,8 +4,8 @@ from typing import Any
 from aiogram import types
 from bs4 import BeautifulSoup, Tag
 
-from client import Client
-from config import settings as s
+from core.client import Client
+from core.config import settings as s
 
 
 async def send_message(last_post, message) -> None:

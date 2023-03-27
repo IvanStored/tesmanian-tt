@@ -5,9 +5,9 @@ from aiogram.dispatcher.filters import Command
 
 from aiogram import executor, types
 
-from parser import parser
-from config import settings
-from client import Client
+from core.parser import parser
+from core.config import settings
+from core.client import Client
 
 
 @settings.dp.message_handler(Command("start"))

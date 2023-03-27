@@ -3,7 +3,7 @@ import os
 import requests
 from requests import Response
 
-from config import Settings, settings
+from core.config import settings
 
 
 class Client:
