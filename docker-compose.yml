@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    command: sh -c "python -m main"
+    volumes:
+      - .:/project
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+    env_file:
+      - .env
+    environment:
+      - HOST=${REDIS_HOST},
+    ports:
+      - "${REDIS_PORT}:6379"
