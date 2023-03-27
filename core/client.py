@@ -9,14 +9,14 @@ from core.config import settings as s
 
 class Client:
     def __init__(self):
-        self.selenium_cookies = None
-        self.session = None
+        self.selenium_cookies: list[dict] | None = None
+        self.session: requests.Session | None = None
         self.get_session()
-        self.email = os.getenv("EMAIL")
-        self.password = os.getenv("PASSWORD")
-        self.NEWS_LINK = "https://www.tesmanian.com/blogs/tesmanian-blog"
-        self.LOGIN_URL = "https://www.tesmanian.com/account/login"
-        self.data = {
+        self.email: str = os.getenv("EMAIL")
+        self.password: str = os.getenv("PASSWORD")
+        self.NEWS_LINK: str = "https://www.tesmanian.com/blogs/tesmanian-blog"
+        self.LOGIN_URL: str = "https://www.tesmanian.com/account/login"
+        self.data: dict = {
             "customer[email]": self.email,
             "customer[password]": self.password,
         }
@@ -33,7 +33,7 @@ class Client:
         except Exception as e:
             s.logger.error(e)
 
-    def get_session(self):
+    def get_session(self) -> None:
         if self.selenium_cookies is None:
             self.selenium_cookies = get_selenium_cookies()
 

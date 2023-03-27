@@ -8,7 +8,13 @@ from core.client import Client
 from core.config import settings as s
 
 
-async def send_and_pin_message(last_post: Any, message: types.Message) -> None:
+async def send_message(last_post: Any, message: types.Message) -> None:
+    """
+    Send message(new article) to channel and bot
+    :param last_post: Any
+    :param message: types.Message
+    :return: None
+    """
     await s.BOT.send_message(chat_id=s.CHANNEL_ID, text=last_post.decode("utf-8"))
     await message.answer(
         text=f"This post was posted to channel: {last_post.decode('utf-8')}"
@@ -26,6 +32,11 @@ async def save_post_to_storage(link: str, title: str, date: str, author: str) ->
 
 
 def convert_to_post_text(detailed_info: str) -> tuple[str, str, str]:
+    """
+    Formats information from storage to readable view
+    :param detailed_info: str
+    :return: tuple[str, str, str]
+    """
     info = detailed_info.split("\n")
     info = [sentence for sentence in info if sentence != ""]
     title, date, author = info[0], info[1], info[2]
@@ -62,7 +73,7 @@ async def parser(
             await save_post_to_storage(link=link, author=author, title=title, date=date)
             try:
                 last_post = await get_last_post_from_storage(link=link)
-                await send_and_pin_message(last_post=last_post, message=message)
+                await send_message(last_post=last_post, message=message)
                 s.logger.info(msg=f"Article {link} was posted to channel")
             except Exception as e:
                 s.logger.error(msg=e)

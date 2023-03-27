@@ -3,6 +3,7 @@ import time
 from http.cookiejar import Cookie
 
 from bs4 import BeautifulSoup
+from requests import Response
 from requests.cookies import RequestsCookieJar
 from selenium import webdriver
 from selenium.webdriver import DesiredCapabilities
@@ -12,7 +13,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from core.config import settings as s
 
 
-def login_check(response) -> bool:
+def login_check(response: Response) -> bool:
+    """
+    Check that login to site was successful by searching button for logout
+    :param response: requests.Response
+    :return: bool
+    """
     try:
         soup = BeautifulSoup(response.text, "html.parser")
         check = soup.select_one("a[href='/account/logout']").text
@@ -26,6 +32,11 @@ def login_check(response) -> bool:
 def parse_selenium_cookie(
     selenium_cookie: dict,
 ) -> Cookie:
+    """
+    Make cookie from selenium type to cookiejar.Cookie
+    :param selenium_cookie: dict
+    :return: Cookie
+    """
     return Cookie(
         version=0,
         name=selenium_cookie.get("name"),
@@ -50,11 +61,22 @@ def parse_selenium_cookie(
 def put_cookies_in_jar(
     selenium_cookies: list[dict], cookie_jar: RequestsCookieJar
 ) -> None:
+    """
+    Set cookie for current session
+    :param selenium_cookies: list[dict]
+    :param cookie_jar: RequestsCookieJar
+    :return: None
+    """
     for cookie in selenium_cookies:
         cookie_jar.set_cookie(parse_selenium_cookie(cookie))
 
 
 def get_selenium_cookies() -> list[dict]:
+    """
+    Use selenium.webdriver.Remote for bypass captcha after post request.
+    Imitating real user; wait before send keys to POST form
+    :return: list[dict]
+    """
     wd = webdriver.Remote(
         command_executor=f"http://{s.SELENIUM_HOST}:{s.SELENIUM_PORT}/wd/hub",
         desired_capabilities=DesiredCapabilities.FIREFOX,
