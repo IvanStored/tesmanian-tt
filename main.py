@@ -5,7 +5,7 @@ from aiogram.dispatcher.filters import Command
 
 from aiogram import executor, types
 
-from core.auth import get_session
+
 from core.parser import parser
 from core.config import settings
 from core.client import Client
@@ -14,10 +14,14 @@ from core.client import Client
 @settings.dp.message_handler(Command("start"))
 async def main(message: types.Message) -> None:
     await message.answer("Please wait for login user")
-    client = Client(session=await get_session(message))
+    client = Client()
     while True:
-        await parser(client=client, message=message)
-        await asyncio.sleep(15)
+        try:
+            await parser(client=client, message=message)
+        except Exception:
+            pass
+        finally:
+            await asyncio.sleep(15)
 
 
 if __name__ == "__main__":

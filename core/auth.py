@@ -2,10 +2,7 @@ import os
 import time
 from http.cookiejar import Cookie
 
-import requests
-from aiogram import types
 from bs4 import BeautifulSoup
-from requests import Session
 from requests.cookies import RequestsCookieJar
 from selenium import webdriver
 from selenium.webdriver import DesiredCapabilities
@@ -94,36 +91,3 @@ def get_selenium_cookies() -> list[dict]:
     selenium_cookies = wd.get_cookies()
     wd.close()
     return selenium_cookies
-
-
-async def get_session(
-    message: types.Message, selenium_cookies: list[dict] = None
-) -> Session:
-    if selenium_cookies is None:
-        selenium_cookies = get_selenium_cookies()
-
-    with requests.Session() as session:
-        session.headers.update(s.headers)
-        put_cookies_in_jar(
-            selenium_cookies=selenium_cookies, cookie_jar=session.cookies
-        )
-
-        s.logger.info(msg="Try login")
-
-        session.post(
-            url=s.LOGIN_URL,
-            data={
-                "customer[email]": os.getenv("EMAIL"),
-                "customer[password]": os.getenv("PASSWORD"),
-            },
-            headers=session.headers,
-        )
-
-        response = session.get(url=s.ACCOUNT_URL)
-
-        if login_check(response):
-            s.logger.info(msg="Success")
-            await message.answer(
-                text=f"{os.getenv('EMAIL')} success login, start parsing"
-            )
-            return session
